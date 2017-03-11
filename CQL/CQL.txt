@@ -1,0 +1,120 @@
+a- CREATE
+
+Cette commande est utilisée pour créer des nœuds sans propriétés, des nœuds avec des propriétés, créer des relations entre nœuds sans propriétés, créer des relations entre les nœuds et les propriétés, créer des étiquettes simples ou multiples sur un nœud ou une relation.
+Syntaxe du CREATE
+CREATE (
+   <nom du nœud>:<nom de l’étiquette>
+   { 	
+      <nom proprité 1>:<valeur propriété 1>
+      ........
+      < nom proprité n>:< valeur propriété n>
+   }
+)
+
+Exemple :
+CREATE (etudiant1:etudiant { etudiantId:1,etudiantNom:"Edgard",location:"Liban" })
+
+
+b-	MATCH et RETURN
+
+La commande MATCH + RETURN est utilisée pour récupérer certaines propriétés d'un nœud, récupérer toutes les propriétés d'un nœud, récupérer certaines propriétés des nœuds et des relations associées et récupérer toutes les propriétés des nœuds et des relations associées.
+Syntaxe :
+MATCH 
+(
+   <nom du nœud>:<nom de l’étiquette>
+)
+RETURN 
+   <nom propriété 1>:<valeur propriété 1>
+    ........
+   < nom propriété n>:< valeur propriété n>
+
+Exemple:
+MATCH (etudiant1: etudiant)
+RETURN etudiant1.etudiantId,etudiant1.etudiantNom
+ 
+
+c-	WHERE
+
+Comme SQL, Neo4j CQL a fourni la clause WHERE dans la commande CQL MATCH pour filtrer les résultats d'une requête MATCH.
+Syntaxe :
+WHERE <condition> <boolean-operator> <valeur>
+Exemple:
+MATCH (etudiant1:etudiant) 
+WHERE etudiant1.etudiantNom = 'Edgard' 
+RETURN etudiant1
+ 
+
+d-	DELETE
+
+DELETE est utilisée pour supprimer un nœud et les relations associés.
+Syntaxe :
+DELETE <nom du nœud>
+
+Exemple :
+MATCH (etudiant1:etudiant) DELETE etudiant1
+ 
+
+e-	REMOVE
+La commande REMOVE est utilisée pour supprimer les étiquettes ou les propriétés d'un nœud ou d'une relation.
+Syntaxe :
+REMOVE <nom du nœud>.<nom de propriété>
+Exemple :
+MATCH (etudiant1:etudiant) 
+REMOVE etudiant1.location 
+RETURN etudiant1
+ 
+
+f-	SET
+Parfois, en fonction des besoins de nos clients, nous devons ajouter de nouvelles propriétés aux nœuds ou relations existants.
+ La fonction SET a pour but d’ajouter de nouvelles propriétés au nœud ou à la relation existante, de plus, ajouter ou mettre à jour les valeurs des propriétés.
+
+Syntaxe :
+SET <nom du nœud>.<nom de propriété> = <valeur>
+Exemple :
+MATCH (etudiant1:etudiant)
+SET etudiant1.etudiantNom = 'Edgard Chamoun'
+RETURN etudiant1
+ 
+
+g-	ORDER BY 
+
+La fonction "ORDER BY" trie les résultats renvoyés par une requête MATCH. Nous pouvons trier les lignes en ordre croissant ou en ordre décroissant.
+Par défaut, il classe les lignes par ordre croissant. Si nous voulons les classer par ordre décroissant, nous devons utiliser la clause DESC.
+Syntaxe : 
+ORDER BY <nom du propriété>  [DESC]	
+Exemple :
+MATCH (etudiant1:etudiant)
+RETURN etudiant1
+ORDER BY etudiant1.etudiantNom
+ 
+
+h-	UNION
+Union combine et renvoie des lignes communes à partir deux ensembles de résultats en un seul ensemble de résultats. Il ne renvoie pas les lignes dupliquées à partir de deux nœuds.
+Restriction:
+Les types de colonnes de résultats et les noms de deux ensembles de résultats doivent correspondre et cela signifie que les noms de colonne doivent être identiques et les types de données de colonne doivent être identiques.
+Syntaxe :
+<MATCH Commande1>
+   UNION
+<MATCH Commande2>
+Exemple :
+MATCH (e:etudiant) RETURN e.d, e.nom
+UNION
+MATCH (el:eleve) RETURN el.id, el.nom
+
+i-	CREATE RELATION
+
+Pour créer une relation entre les nœuds, il faut premièrement créer les indexes des nœuds suite à la création de la relation suivant une direction spécifique.
+Exemple :
+CREATE INDEX ON :etudiant(etudiantId)
+CREATE INDEX ON :professeur(professeurId)
+MATCH (e:etudiant{etudiantNom:'Edgard'}), (p:professeur{professeurNom:'Pascal'})
+CREATE (p)-[:Enseigne]->(e)
+
+ 
+j-	Fonctions d’Agrégation
+Comme SQL, Neo4j CQL a fourni certaines fonctions d'agrégation à utiliser dans la fonction RETURN. Il est similaire à la fonction GROUP BY dans SQL
+Nous pouvons utiliser cette fonction RETURN + Fonctions Agrégation dans MATCH pour travailler sur un groupe de nœuds et retourner une valeur agrégée.
+
+Exemple :
+MATCH (e:etudiant) 
+RETURN COUNT(e)
